@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans 
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:ldap="http://www.springframework.org/schema/ldap"
+  xsi:schemaLocation="
+  	http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+    http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-4.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/ldap
+    http://www.springframework.org/schema/ldap/spring-ldap.xsd
+    ">
+    
+    <mvc:annotation-driven/> 
+	<tx:annotation-driven />
+
+<!-- 
+    <mvc:annotation-driven conversion-service="conversionService"/> 
+	<tx:annotation-driven />
+ -->
+
+	<context:component-scan base-package="com.jiayun.inventory.controller" />
+    <context:component-scan base-package="com.jiayun.inventory.dao" />
+    <context:component-scan base-package="com.jiayun.inventory.service" />
+<!-- 
+    <context:component-scan base-package="com.jiayun.scp.formatter" />
+    <context:component-scan base-package="com.jiayun.scp.util" />
+ -->
+    
+<!-- 
+	Spring MVC config
+ -->
+
+    <mvc:resources mapping="/static/**" location="/static/" cache-period="31556926"/>
+    
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    		<property name="prefix" value="/WEB-INF/pages/" />
+    		<property name="suffix" value=".jsp" />
+    </bean>
+
+
+<!-- 
+	Spring MVC Formatter config
+
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="formatters">
+		<set>
+			<bean class="com.jiayun.scp.formatter.LongToDateString" />
+		</set>
+		</property>
+	</bean>
+ -->    
+ 
+
+<!-- 
+	Spring Transaction Manager config
+ -->
+
+
+<!-- 
+	Actually, spring hibernate5.LocalSessionFactory doesn't need a data source!  
+	It will use local hibernate configuration (hibernate.properties)
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+	    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	    <property name="url" value="jdbc:mysql://localhost/jiayun_scp?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8" /> 
+	    <property name="username" value="root" />
+	    <property name="password" value="" />
+	</bean>
+-->
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	    <!-- <property name="dataSource" ref="dataSource"></property> -->
+	    <property name="hibernateProperties">
+	    		<props>
+        		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+        		<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+                <prop key="hibernate.connection.useUnicode">true</prop>
+      		</props>
+    		</property>
+    		<property name="packagesToScan" value="com.jiayun.inventory.entity" />
+  	</bean>
+  
+  	<bean id="transactionManager"
+    	class="org.springframework.orm.hibernate5.HibernateTransactionManager" 
+    	p:sessionFactory-ref="sessionFactory">
+  	</bean>    
+  	
+  	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver" />	
+<!-- 
+	spring security configuration
+ -->
+ 
+ 	<bean id="loginSuccessHandler" class="com.jiayun.inventory.controller.LoginSuccessHandler"/>
+	<bean id="simpleDirContextAuthenticationStrategy" class="org.springframework.ldap.core.support.SimpleDirContextAuthenticationStrategy" />
+<!-- 
+ 	<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		<constructor-arg name="strength" value="11" />
+ 	</bean>
+	<bean id="contextSource"
+		class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+		<constructor-arg value="ldap://mail.jiayun-tech.cn:389/dc=jiayun-tech,dc=cn"/>
+		<property name="userDn" value="cn=ldapadm,dc=jiayun-tech,dc=cn"/>
+		<property name="password" value="gi1990ko"/>
+	</bean>
+ -->
+
+  	<security:http auto-config="true" use-expressions="true">
+        <security:intercept-url pattern="/static**" access="permitAll" />
+        <security:intercept-url pattern="/login**"  access="permitAll" />
+        <security:intercept-url pattern="/index"    access="isAuthenticated()" />
+  	<!-- 
+        <security:http-basic />
+  	
+		<security:intercept-url pattern="/sale/order/input" 	access="hasAnyRole('SALES')" />
+		<security:intercept-url pattern="/sale/order/edit/**" 	access="hasAnyRole('SALES')" />
+		<security:intercept-url pattern="/sale/order_upload/**" access="hasAnyRole('SALES')" />
+		<security:intercept-url pattern="/sale/**" 				access="hasAnyRole('USER', 'SUPER')" />
+
+		<security:intercept-url pattern="/product/part/input" 		access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/part/edit/**" 	access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/part_upload/**" 	access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/combo/input" 		access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/combo/edit/**" 	access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/combo_upload/**" 	access="hasAnyRole('PRODUCT')" />
+		<security:intercept-url pattern="/product/**" 				access="hasAnyRole('USER')" />
+		
+		<security:intercept-url pattern="/customer/**"			access="hasAnyRole('SALES')" />
+		<security:intercept-url pattern="/staff/passwd/**" 		access="hasAnyRole('USER', 'SUPER')" />
+		<security:intercept-url pattern="/staff/**" 			access="hasAnyRole('ADMIN', 'SUPER')" />
+		<security:intercept-url pattern="/index**" 				access="hasAnyRole('USER', 'SUPER')"/>
+  	 -->
+		<security:csrf disabled="true"/>
+	 	<security:form-login 
+			login-page="/login"  
+            default-target-url="/index"
+            authentication-success-handler-ref="loginSuccessHandler"
+        />
+        <!-- 
+	 	<security:form-login 
+			login-page="/login"  
+            default-target-url="/index"
+            authentication-success-handler-ref="loginSuccessHandler"
+        />
+        <security:remember-me key="jscp"/>
+         -->
+	</security:http> 
+	
+	<security:authentication-manager>
+		<security:ldap-authentication-provider
+   			user-search-base="ou=People"
+    			user-search-filter="(uniqueIdentifier={0})"
+    			group-search-base="ou=Group"
+    			group-search-filter="(uniqueMember={0})">
+    		</security:ldap-authentication-provider>
+	<!-- 
+	    <security:authentication-provider>
+        		<security:user-service>
+                <security:user name="user" password="user" authorities="ROLE_USER" />
+            </security:user-service>
+        </security:authentication-provider>
+		<security:authentication-provider user-service-ref="jiayunUserDetailsService">
+			<security:password-encoder hash="plaintext"/>
+			<security:password-encoder ref="encoder"/>
+		</security:authentication-provider>
+	 -->
+	</security:authentication-manager>
+	<security:ldap-server url="ldap://mail.jiayun-tech.cn:389/dc=jiayun-tech,dc=cn" />
+	
+	<ldap:context-source url="ldap://mail.jiayun-tech.cn:389"
+             base="dc=jiayun-tech,dc=cn"
+             username="cn=ldapadm,dc=jiayun-tech,dc=cn"
+             password="gi1990ko"
+             authentication-strategy-ref="simpleDirContextAuthenticationStrategy"
+             native-pooling="true"/>
+    <ldap:ldap-template id="ldapTemplate"/>
+</beans>
