@@ -10,9 +10,8 @@
 			method="post" acceptCharset='utf-8'>
 	<div class="panel panel-default">
 		<div class="panel-heading" style="font-size:14px; height:52px;">
-			<span><a href="<c:url value="/warehouse/list?moible"/>" class='glink'>仓库</a> / 
+			<a class='glink' href="<c:url value="/warehouse/list?mobile"/>">仓库</a> / 
 			<a class="glink" href="<c:url value="/warehouse/inventory/${warehouse.id}?mobile"/>">${warehouse.name}</a>
-			</span>
 			<input id="btnSumbit" class="btn btn-success btn-sm pull-right" style="width: 100px;" type="submit" value="入库"/>
 		</div>
 		<div class="panel-body">

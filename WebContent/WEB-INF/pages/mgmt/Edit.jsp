@@ -28,7 +28,7 @@
 			<div class="form-group">
 				<label class="col-md-2 control-label" for="owner">管理员</label>
 				<div class="col-md-9">
-					<form:select cssClass="chosen-select" path="owner" items="${people}" itemLabel="name" itemValue="uid"/>
+					<form:select cssClass="form-control chosen-select" path="owner" items="${people}" itemLabel="name" itemValue="uid"/>
 				</div>
 			</div>
 

@@ -41,7 +41,7 @@
 				<label class="col-md-2 control-label">从</label>
 				<div class="col-md-8">
 					<c:choose>
-					<c:when test="${obj.io == I}">
+					<c:when test="${obj.io == 'I'}">
 						<input class="form-control" value="${obj.otherPlace}" readonly/>
 					</c:when>
 					<c:otherwise>
@@ -54,7 +54,7 @@
 				<label class="col-md-2 control-label">到</label>
 				<div class="col-md-8">
 					<c:choose>
-					<c:when test="${obj.io == I}">
+					<c:when test="${obj.io == 'I'}">
 						<input class="form-control" value="${obj.warehouseName}" readonly/>
 					</c:when>
 					<c:otherwise>

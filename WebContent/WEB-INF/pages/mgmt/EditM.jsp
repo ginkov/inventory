@@ -6,7 +6,7 @@
 	<form:form modelAttribute="obj" name="form" cssClass="form-horizontal" action="${pageContext.request.contextPath}/mgmt/update" method="post" acceptCharset='utf-8'>
 	<div class="panel panel-default">
 		<div class="panel-heading" style="font-size:14px; height:52px;">
-			<span><a href="<c:url value="/mgmt/list"/>" class='glink'>仓库</a> / ${obj.name} / 编辑</span>
+			<span><a href="<c:url value="/mgmt/list?mobile"/>" class='glink'>仓库</a> / ${obj.name} / 编辑</span>
 			<input id="btnSumbit" class="btn btn-success btn-sm pull-right" style="width: 100px;" type="submit" value="保存"/>
 		</div>
 		<div class="panel-body">
@@ -29,7 +29,7 @@
 			<div class="form-group">
 				<label class="col-md-2 control-label" for="owner">管理员</label>
 				<div class="col-md-9">
-					<form:select cssClass="chosen-select" path="owner" items="${people}" itemLabel="name" itemValue="uid"/>
+					<form:select cssClass="form-control chosen-select" path="owner" items="${people}" itemLabel="name" itemValue="uid"/>
 				</div>
 			</div>
 

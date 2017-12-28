@@ -10,7 +10,7 @@
 			</div>
 			<div style="margin-top:10px;">
 				<a id="btnEdit" class="btn btn-default btn-sm pull-right" 
-						href="<c:url value="/mgmt/edit/${obj.id}"/>" style="width: 100px;">
+						href="<c:url value="/mgmt/edit/${obj.id}?mobile"/>" style="width: 100px;">
 						<i class="fa fa-pencil"></i> 修改</a>
 				<button id="btnDel" style="width:60px; margin-right: 20px;" 
 						class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#modalConfirmDel">
